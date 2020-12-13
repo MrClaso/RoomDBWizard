@@ -164,6 +164,62 @@ void StartWindow::on_buttonBox_accepted()
 
     myfile.open(startUi->lineEdit_2->text().toStdString() + "/app/build.gradle");
     myfile << str;
+    myfile.close();
+
+    myfile.open(startUi->lineEdit_2->text().toStdString() + "/app/src/main/res/layout/activity_main.xml");
+    
+    myfile << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+
+myfile << "<!-- Copyright 2017 Google Inc.";
+myfile << "";
+myfile << "Licensed under the Apache License, Version 2.0 (the \"License\");";
+myfile << "you may not use this file except in compliance with the License.";
+myfile << "You may obtain a copy of the License at";
+myfile << "";
+    myfile << "http://www.apache.org/licenses/LICENSE-2.0";
+myfile << "";
+myfile << "Unless required by applicable law or agreed to in writing, software";
+myfile << "distributed under the License is distributed on an \"AS IS\" BASIS,";
+myfile << "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.";
+myfile << "See the License for the specific language governing permissions and";
+myfile << "limitations under the License. -->";
+myfile << "";
+myfile << "<!-- Uses the Empty Activity Template.";
+myfile << "Want to minimize unrelated busy work where students just remove code.";
+myfile << "So, we are leaving the template code in. -->";
+myfile << "";
+myfile << "<androidx.constraintlayout.widget.ConstraintLayout";
+    myfile << "xmlns:android=\"http://schemas.android.com/apk/res/android\"";
+    myfile << "xmlns:app=\"http://schemas.android.com/apk/res-auto\"";
+    myfile << "xmlns:tools=\"http://schemas.android.com/tools\"";
+    myfile << "android:layout_width=\"match_parent\"";
+    myfile << "android:layout_height=\"match_parent\"";
+    myfile << "tools:context=\".MainActivity\">";
+myfile << "";
+    myfile << "<androidx.recyclerview.widget.RecyclerView";
+        myfile << "android:id=\"@+id/recyclerview\"";
+        myfile << "android:layout_width=\"0dp\"";
+        myfile << "android:layout_height=\"0dp\"";
+        myfile << "tools:listitem=\"@layout/recyclerview_item\"";
+        myfile << "android:padding=\"@dimen/big_padding\"";
+        myfile << "app:layout_constraintBottom_toBottomOf=\"parent\"";
+        myfile << "app:layout_constraintLeft_toLeftOf=\"parent\"";
+        myfile << "app:layout_constraintRight_toRightOf=\"parent\"";
+        myfile << "app:layout_constraintTop_toTopOf=\"parent\" />";
+myfile << "";
+    myfile << "<com.google.android.material.floatingactionbutton.FloatingActionButton";
+        myfile << "android:id=\"@+id/fab\"";
+        myfile << "app:layout_constraintBottom_toBottomOf=\"parent\"";
+        myfile << "app:layout_constraintEnd_toEndOf=\"parent\"";
+        myfile << "android:layout_width=\"wrap_content\"";
+        myfile << "android:layout_height=\"wrap_content\"";
+        myfile << "android:layout_margin=\"16dp\"";
+        myfile << "android:contentDescription=\"@string/add_word\"";
+        myfile << "android:src=\"@drawable/ic_add_black_24dp\"/>";
+myfile << "";
+myfile << "</androidx.constraintlayout.widget.ConstraintLayout>";
+
+myfile.close();
 }
 
 void StartWindow::on_pushButton_2_clicked()
