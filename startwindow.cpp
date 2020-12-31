@@ -7,7 +7,14 @@ StartWindow::StartWindow(QWidget *parent)
     : QDialog(parent)
     , startUi(new Ui::StartWindow)
 {
+/*
+ *     startUi->lineEdit->setStyleSheet("QLineEdit {  border: 2px solid;"
+                                     "border-radius: 5px;}");
+*/
+
     startUi->setupUi(this);
+
+    startUi->widget->setStyleSheet("border: 2px solid grey");
     path_calculated = false;
 }
 
@@ -29,9 +36,14 @@ void StartWindow::on_pushButton_clicked()
     tableDialog->setModal(true);
 
     if(tableDialog->exec() == QDialog::Accepted) { //Check if they clicked Ok
+        QHBoxLayout *hL = new QHBoxLayout ();
         QLabel *tableLabel = new QLabel();
+        QCheckBox *chBoxMakeTable = new QCheckBox();
         tableLabel->setText(tableDialog->tableName);
-        startUi->verticalLayout->addWidget(tableLabel);
+        hL->addWidget(tableLabel);
+        hL->addStretch();
+        hL->addWidget(chBoxMakeTable);
+        startUi->verticalLayout->addLayout(hL);
     }
 }
 
@@ -168,55 +180,46 @@ void StartWindow::on_buttonBox_accepted()
 
     myfile.open(startUi->lineEdit_2->text().toStdString() + "/app/src/main/res/layout/activity_main.xml");
     
-    myfile << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+    myfile << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 
-myfile << "<!-- Copyright 2017 Google Inc.";
-myfile << "";
-myfile << "Licensed under the Apache License, Version 2.0 (the \"License\");";
-myfile << "you may not use this file except in compliance with the License.";
-myfile << "You may obtain a copy of the License at";
-myfile << "";
-    myfile << "http://www.apache.org/licenses/LICENSE-2.0";
-myfile << "";
-myfile << "Unless required by applicable law or agreed to in writing, software";
-myfile << "distributed under the License is distributed on an \"AS IS\" BASIS,";
-myfile << "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.";
-myfile << "See the License for the specific language governing permissions and";
-myfile << "limitations under the License. -->";
-myfile << "";
-myfile << "<!-- Uses the Empty Activity Template.";
-myfile << "Want to minimize unrelated busy work where students just remove code.";
-myfile << "So, we are leaving the template code in. -->";
-myfile << "";
-myfile << "<androidx.constraintlayout.widget.ConstraintLayout";
-    myfile << "xmlns:android=\"http://schemas.android.com/apk/res/android\"";
-    myfile << "xmlns:app=\"http://schemas.android.com/apk/res-auto\"";
-    myfile << "xmlns:tools=\"http://schemas.android.com/tools\"";
-    myfile << "android:layout_width=\"match_parent\"";
-    myfile << "android:layout_height=\"match_parent\"";
-    myfile << "tools:context=\".MainActivity\">";
-myfile << "";
-    myfile << "<androidx.recyclerview.widget.RecyclerView";
-        myfile << "android:id=\"@+id/recyclerview\"";
-        myfile << "android:layout_width=\"0dp\"";
-        myfile << "android:layout_height=\"0dp\"";
-        myfile << "tools:listitem=\"@layout/recyclerview_item\"";
-        myfile << "android:padding=\"@dimen/big_padding\"";
-        myfile << "app:layout_constraintBottom_toBottomOf=\"parent\"";
-        myfile << "app:layout_constraintLeft_toLeftOf=\"parent\"";
-        myfile << "app:layout_constraintRight_toRightOf=\"parent\"";
-        myfile << "app:layout_constraintTop_toTopOf=\"parent\" />";
-myfile << "";
-    myfile << "<com.google.android.material.floatingactionbutton.FloatingActionButton";
-        myfile << "android:id=\"@+id/fab\"";
-        myfile << "app:layout_constraintBottom_toBottomOf=\"parent\"";
-        myfile << "app:layout_constraintEnd_toEndOf=\"parent\"";
-        myfile << "android:layout_width=\"wrap_content\"";
-        myfile << "android:layout_height=\"wrap_content\"";
-        myfile << "android:layout_margin=\"16dp\"";
-        myfile << "android:contentDescription=\"@string/add_word\"";
-        myfile << "android:src=\"@drawable/ic_add_black_24dp\"/>";
-myfile << "";
+myfile << "<!-- Copyright 2017 Google Inc.\n";
+myfile << "\n";
+myfile << "Licensed under the Apache License, Version 2.0 (the \"License\");\n";
+myfile << "you may not use this file except in compliance with the License.\n";
+myfile << "You may obtain a copy of the License at\n";
+myfile << "\n";
+    myfile << "http://www.apache.org/licenses/LICENSE-2.0\n";
+myfile << "\n";
+myfile << "Unless required by applicable law or agreed to in writing, software\n";
+myfile << "distributed under the License is distributed on an \"AS IS\" BASIS,\n";
+myfile << "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n";
+myfile << "See the License for the specific language governing permissions and\n";
+myfile << "limitations under the License. -->\n";
+myfile << "\n";
+myfile << "<!-- Uses the Empty Activity Template.\n";
+myfile << "Want to minimize unrelated busy work where students just remove code.\n";
+myfile << "So, we are leaving the template code in. -->\n";
+myfile << "\n";
+myfile << "<androidx.constraintlayout.widget.ConstraintLayout\n";
+    myfile << "xmlns:android=\"http://schemas.android.com/apk/res/android\"\n";
+    myfile << "xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n";
+    myfile << "xmlns:tools=\"http://schemas.android.com/tools\"\n";
+    myfile << "android:layout_width=\"match_parent\"\n";
+    myfile << "android:layout_height=\"match_parent\"\n";
+    myfile << "tools:context=\".MainActivity\">\n";
+myfile << "\n";
+    myfile << "<androidx.recyclerview.widget.RecyclerView\n";
+        myfile << "android:id=\"@+id/recyclerview\"\n";
+        myfile << "android:layout_width=\"0dp\"\n";
+        myfile << "android:layout_height=\"0dp\"\n";
+        myfile << "tools:listitem=\"@layout/recyclerview_item\"\n";
+        myfile << "android:padding=20\n";
+        myfile << "app:layout_constraintBottom_toBottomOf=\"parent\"\n";
+        myfile << "app:layout_constraintLeft_toLeftOf=\"parent\"\n";
+        myfile << "app:layout_constraintRight_toRightOf=\"parent\"\n";
+        myfile << "app:layout_constraintTop_toTopOf=\"parent\" />\n";
+myfile << "\n";
+
 myfile << "</androidx.constraintlayout.widget.ConstraintLayout>";
 
 myfile.close();

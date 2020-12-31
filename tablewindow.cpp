@@ -90,7 +90,6 @@ void TableWindow::on_pushButton_2_clicked()
     hL->addSpacing(30);
 
     hL->addWidget(checkBoxUniqe);
-
     hL->addStretch();
 
     ui->verticalLayout_2->addLayout(hL);

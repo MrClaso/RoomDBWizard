@@ -36,16 +36,7 @@ myfile << "";
         myfile << "app:layout_constraintLeft_toLeftOf=\"parent\"";
         myfile << "app:layout_constraintRight_toRightOf=\"parent\"";
         myfile << "app:layout_constraintTop_toTopOf=\"parent\" />";
-myfile << "";
-    myfile << "<com.google.android.material.floatingactionbutton.FloatingActionButton";
-        myfile << "android:id=\"@+id/fab\"";
-        myfile << "app:layout_constraintBottom_toBottomOf=\"parent\"";
-        myfile << "app:layout_constraintEnd_toEndOf=\"parent\"";
-        myfile << "android:layout_width=\"wrap_content\"";
-        myfile << "android:layout_height=\"wrap_content\"";
-        myfile << "android:layout_margin=\"16dp\"";
-        myfile << "android:contentDescription=\"@string/add_word\"";
-        myfile << "android:src=\"@drawable/ic_add_black_24dp\"/>";
+
 myfile << "";
 myfile << "</androidx.constraintlayout.widget.ConstraintLayout>";
 
