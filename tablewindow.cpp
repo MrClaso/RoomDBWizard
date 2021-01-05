@@ -142,7 +142,7 @@ void TableWindow::on_pushButton_clicked()
     myfile << "@PrimaryKey(autoGenerate = true)\n";
     myfile << "private " << type_str << " " << prim_str << ";\n\n";
 
-
+// TODO  Something fishy here. Primary key, index, column info!!???
     foreach (columnStruct i, columnList) {
         if(!i.primary->isChecked()){
             myfile << "@ColumnInfo(name = \"" << i.name->text().toStdString() << "\")\n";
