@@ -10,16 +10,16 @@ TableWindow::TableWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-    QCheckBox *checkBoxDelete = new QCheckBox ();
-    QLineEdit *lEColumnName = new QLineEdit ();
-    QComboBox *comboBoxType = new QComboBox ();
-    QCheckBox *checkBoxPrimary = new QCheckBox ();
-    QCheckBox *checkBoxUniqe = new QCheckBox ();
-    QHBoxLayout *hL = new QHBoxLayout ();
+    checkBoxDelete = new QCheckBox ();
+    lEColumnName = new QLineEdit ();
+    comboBoxType = new QComboBox ();
+    checkBoxPrimary = new QCheckBox ();
+    checkBoxUniqe = new QCheckBox ();
+    hL = new QHBoxLayout ();
 
-    comboBoxType->addItem(comboBoxOption3String);
-    comboBoxType->addItem(comboBoxOption1String);
-    comboBoxType->addItem(comboBoxOption2String);
+    comboBoxType->addItem(comboBoxOption3String, 3);
+    comboBoxType->addItem(comboBoxOption1String, 1);
+    comboBoxType->addItem(comboBoxOption2String, 2);
 
     lEColumnName->setFixedWidth(170);
     hL->addSpacing(10);
@@ -64,16 +64,20 @@ void TableWindow::setData(QString dBaseName){
 
 void TableWindow::on_pushButton_2_clicked()
 {
-    QCheckBox *checkBoxDelete = new QCheckBox ();
-    QLineEdit *lEColumnName = new QLineEdit ();
-    QComboBox *comboBoxType = new QComboBox ();
-    QCheckBox *checkBoxPrimary = new QCheckBox ();
-    QCheckBox *checkBoxUniqe = new QCheckBox ();
-    QHBoxLayout *hL = new QHBoxLayout ();
+    columnPaket.colName = lEColumnName->text();
+    columnPaket.colType = comboBoxType->currentData();
+    columnPaketList.append(columnPaket);
 
-    comboBoxType->addItem(comboBoxOption3String);
-    comboBoxType->addItem(comboBoxOption1String);
-    comboBoxType->addItem(comboBoxOption2String);
+    checkBoxDelete = new QCheckBox ();
+    lEColumnName = new QLineEdit ();
+    comboBoxType = new QComboBox ();
+    checkBoxPrimary = new QCheckBox ();
+    checkBoxUniqe = new QCheckBox ();
+    hL = new QHBoxLayout ();
+
+    comboBoxType->addItem(comboBoxOption3String, 3);
+    comboBoxType->addItem(comboBoxOption1String, 1);
+    comboBoxType->addItem(comboBoxOption2String, 2);
 
     lEColumnName->setFixedWidth(170);
     hL->addSpacing(10);
@@ -107,9 +111,13 @@ void TableWindow::on_pushButton_2_clicked()
 
 void TableWindow::on_pushButton_clicked()
 {
+    columnPaket.colName = lEColumnName->text();
+    columnPaket.colType = comboBoxType->currentData();
+    columnPaketList.append(columnPaket);
+
     tableName = ui->lineEdit->text();
     std::string prim_str, type_str, colNameStr, ColNameStr, TableNameStr, DBaseNameStr;
-    for (auto const& i : columnList) {
+    foreach (columnStruct i, columnList) {
         if(i.primary->isChecked()) {
             prim_str = i.name->text().toStdString();
             type_str = i.type->currentText().toStdString();
@@ -135,7 +143,7 @@ void TableWindow::on_pushButton_clicked()
     myfile << "private " << type_str << " " << prim_str << ";\n\n";
 
 
-    for (auto const& i : columnList) {
+    foreach (columnStruct i, columnList) {
         if(!i.primary->isChecked()){
             myfile << "@ColumnInfo(name = \"" << i.name->text().toStdString() << "\")\n";
             myfile << "private " << i.type->currentText().toStdString() << " " << i.name->text().toStdString() << ";\n\n";
@@ -147,7 +155,7 @@ void TableWindow::on_pushButton_clicked()
      myfile << "* Getters and Setters\n";
      myfile << "* */\n";
 
-    for (auto const& i : columnList) {
+    foreach (columnStruct i, columnList) {
         colNameStr = i.name->text().toStdString();
         ColNameStr = colNameStr;
         ColNameStr[0] = toupper(colNameStr[0]);
@@ -195,7 +203,6 @@ void TableWindow::on_pushButton_clicked()
     myfile << "}\n";
     myfile.close();
 
-    QString qStr;
     DBaseNameStr = dBaseName.toStdString();
     DBaseNameStr[0] = toupper(DBaseNameStr[0]);
 
@@ -296,6 +303,7 @@ void TableWindow::on_pushButton_clicked()
     myfile << "}\n";
 
     myfile.close();
+
 
     this->accept();
 }

@@ -21,6 +21,7 @@ SOURCES += \
     tablewindow.cpp
 
 HEADERS += \
+    general.h \
     startwindow.h \
     tablewindow.h
 

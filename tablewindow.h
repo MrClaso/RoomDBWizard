@@ -1,6 +1,7 @@
 #ifndef TABLEWINDOW_H
 #define TABLEWINDOW_H
 
+#include "general.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QVBoxLayout>
@@ -19,23 +20,15 @@ class TableWindow : public QDialog
 {
     Q_OBJECT
 
-public:
-    explicit TableWindow(QWidget *parent = nullptr);
-    ~TableWindow();
-    QString tableName, dir;
-    std::string package_as_path;
-    std::string package;
-
-    void setData(QString dBaseName);
-
-
-private slots:
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_clicked();
-
 private:
     Ui::TableWindow *ui;
+
+    QCheckBox *checkBoxDelete;
+    QLineEdit *lEColumnName;
+    QComboBox *comboBoxType;
+    QCheckBox *checkBoxPrimary;
+    QCheckBox *checkBoxUniqe;
+    QHBoxLayout *hL;
 
     QString dBaseName;
     QString comboBoxOption1String = "String";
@@ -53,6 +46,27 @@ private:
     };
     columnStruct column;
     QList<columnStruct> columnList;
+
+    ColumnPaket columnPaket;
+
+
+public:
+    explicit TableWindow(QWidget *parent = nullptr);
+    ~TableWindow();
+    QString tableName, dir;
+    std::string package_as_path;
+    std::string package;
+
+    QList<ColumnPaket> columnPaketList;
+
+    void setData(QString dBaseName);
+
+
+private slots:
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_clicked();
+
 
 };
 

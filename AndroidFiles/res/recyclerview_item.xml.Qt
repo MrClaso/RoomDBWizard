@@ -1,27 +1,39 @@
-myfile << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-myfile << "<!-- Copyright 2017 Google Inc.";
-myfile << "";
-myfile << "Licensed under the Apache License, Version 2.0 (the \"License\");";
-myfile << "you may not use this file except in compliance with the License.";
-myfile << "You may obtain a copy of the License at";
-myfile << "";
-    myfile << "http://www.apache.org/licenses/LICENSE-2.0";
-myfile << "";
-myfile << "Unless required by applicable law or agreed to in writing, software";
-myfile << "distributed under the License is distributed on an \"AS IS\" BASIS,";
-myfile << "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.";
-myfile << "See the License for the specific language governing permissions and";
-myfile << "limitations under the License. -->";
-myfile << "";
-myfile << "<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"";
-    myfile << "android:orientation=\"vertical\"";
-    myfile << "android:layout_width=\"match_parent\"";
-    myfile << "android:layout_height=\"wrap_content\">";
-myfile << "";
-    myfile << "<TextView";
-        myfile << "android:id=\"@+id/textView\"";
-        myfile << "style=\"@style/word_title\"";
-        myfile << "android:layout_width=\"match_parent\"";
-        myfile << "android:layout_height=\"wrap_content\"";
-        myfile << "android:background=\"@android:color/holo_orange_light\" />";
-myfile << "</LinearLayout>";
+<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<RelativeLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"
+    android:layout_width=\"match_parent\"
+    android:layout_height=\"wrap_content\"
+    android:padding=\"0dp\">
+
+
+
+<androidx.cardview.widget.CardView
+        android:layout_width=\"match_parent\"
+        android:layout_height=\"wrap_content\"
+        android:layout_marginBottom=\"3dp\">
+
+    <LinearLayout
+        android:id=\"@+id/linearLayoutDay\"
+        android:layout_width=\"match_parent\"
+        android:layout_height=\"wrap_content\"
+        android:orientation=\"horizontal\"
+        android:paddingStart=\"0dp\"
+        android:paddingLeft=\"0dp\"
+        android:paddingTop=\"15dp\"
+        android:paddingEnd=\"0dp\"
+        android:paddingRight=\"0dp\"
+        android:paddingBottom=\"15dp\">
+
+        <TextView
+            android:id=\"@+id/textViewDate\"
+            android:layout_width=\"0dp\"
+            android:layout_height=\"wrap_content\"
+            android:layout_weight=\"35\"
+            android:text=\"@string/textViewDateText\"
+            android:textAlignment=\"viewStart\"
+            android:textAppearance=\"@style/TextAppearance.AppCompat.Medium\" />
+
+    </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
