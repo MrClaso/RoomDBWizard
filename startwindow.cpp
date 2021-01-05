@@ -102,32 +102,6 @@ bool StartWindow::f1(){
     myfile << "\n";
     myfile << "@Database(entities = {";
 
-    /*
-    QList<QLabel*>::iterator it;
-    QList<QLabel*> list = startUi->verticalLayoutWidget->findChildren<QLabel *>();
-    it = list.begin();
-    tableNameStr = it[0]->text().toStdString();
-    TableNameStr = tableNameStr;
-    TableNameStr[0] = toupper(TableNameStr[0]);
-
-    myfile << TableNameStr << ".class" ;
-
-    for( int i = 1; i < list.count(); i++){
-        myfile << ", " << it[i]->text().toStdString() << ".class" ;
-    }
-    myfile << "}, version = 1, exportSchema = false)\n";
-    myfile << "public abstract class " << DataBaseStr << "RoomDatabase extends RoomDatabase {\n";
-    myfile << "\n";
-
-    for( auto listIt : list)  {
-        tableNameStr = listIt->text().toStdString();
-        TableNameStr = tableNameStr;
-        TableNameStr[0] = toupper(TableNameStr[0]);
-        myfile << "public abstract ";
-        myfile << TableNameStr << "Dao " << tableNameStr << "Dao();\n";
-    }
-*/
-
 
     it = tableList.begin();
     //    tableNameStr = it[0]->text().toStdString();
