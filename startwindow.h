@@ -61,6 +61,7 @@ private:
     bool f4();
     bool f6();
     bool f7();
+    bool f8();
     void calculate_path();
 };
 #endif // STARTWINDOW_H

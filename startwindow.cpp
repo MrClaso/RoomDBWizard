@@ -79,6 +79,7 @@ void StartWindow::on_buttonBox_accepted()
 
             ok = f6();  // TableToViewListAdapter.java
 
+            ok = f8();  // MainActivity.java
         }
         if(!showTable) ok = f7();
     }
@@ -463,6 +464,43 @@ bool StartWindow::f7(){
     return true;
 }
 
+bool StartWindow::f8(){
+
+  myfile.open (startUi->lineEdit_2->text().toStdString() + "/app/src/main/java/" + package_as_path + "/MainActivity.java");
+
+  myfile << "package " << package_as_path << ";\n";
+
+  myfile << "\n";
+  myfile << "import androidx.appcompat.app.AppCompatActivity;\n";
+  myfile << "import androidx.lifecycle.ViewModelProvider;\n";
+  myfile << "import androidx.recyclerview.widget.LinearLayoutManager;\n";
+  myfile << "import androidx.recyclerview.widget.RecyclerView;\n";
+  myfile << "\n";
+  myfile << "public class MainActivity extends AppCompatActivity {\n";
+  myfile << "\n";
+      myfile << "private " << TableToViewStr << "ViewModel m" << TableToViewStr << "ViewModel;\n";
+  myfile << "\n";
+      myfile << "@Override\n";
+      myfile << "protected void onCreate(Bundle savedInstanceState) {\n";
+          myfile << "super.onCreate(savedInstanceState);\n";
+  myfile << "\n";
+          myfile << "setContentView(R.layout.activity_main);\n";
+  myfile << "\n";
+          myfile << "RecyclerView recyclerView = findViewById(R.id.recyclerview_item);\n";
+          myfile << "final " << TableToViewStr << "ListAdapter adapter = new " << TableToViewStr << "ListAdapter(this);\n";
+          myfile << "recyclerView.setAdapter(adapter);\n";
+          myfile << "recyclerView.setLayoutManager(new LinearLayoutManager(this));\n";
+          myfile << "m" << TableToViewStr << "ViewModel = new ViewModelProvider(this).get(" << TableToViewStr << "ViewModel.class);\n";
+          myfile << "// Update the cached copy of the words in the adapter.\n";
+          myfile << "m" << TableToViewStr << "ViewModel.getAll" << TableToViewStr << "s().observe(this, adapter::set" << TableToViewStr << "s);\n";
+  myfile << "\n";
+  myfile << "\n";
+      myfile << "}\n";
+  myfile << "}\n";
+
+  myfile.close();
+  return true;
+}
 
 void StartWindow::calculate_path(){
     iofile.open(startUi->lineEdit_2->text().toStdString() + "/app/src/main/AndroidManifest.xml");
