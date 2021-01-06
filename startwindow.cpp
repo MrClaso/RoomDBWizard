@@ -4,6 +4,7 @@
 #include "ui_tablewindow.h"
 
 #include <QMessageBox>
+#include <QFileInfo>
 
 StartWindow::StartWindow(QWidget *parent)
     : QDialog(parent)
@@ -28,7 +29,8 @@ StartWindow::~StartWindow()
 
 void StartWindow::on_pushButton_clicked()
 {
-    if(!path_calculated) calculate_path();
+    if(!path_calculated) ok = calculate_path();
+    if(ok){
     tableDialog = new TableWindow(this);
     tableDialog->setData(startUi->lineEdit->text());
     tableDialog->dir = startUi->lineEdit_2->text();
@@ -52,6 +54,12 @@ void StartWindow::on_pushButton_clicked()
         table.makeTable = chBoxMakeTable;
         tableList.append(table);
     }
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText(startUi->lineEdit_2->text()+ "\ninnehåller inte ett giltigt Androidprojekt.\nSkapa ett (tomt) Androidprojekt innan du fortsätter");
+        msgBox.exec();
+
+    }
 }
 
 void StartWindow::on_buttonBox_accepted()
@@ -67,12 +75,14 @@ void StartWindow::on_buttonBox_accepted()
 
     ok = f3();  // build.gradle (app)
 
+    showTable = false;
     foreach( TableStruct listIt, tableList ){
         if(listIt.makeTable->isChecked()){
             showTable = true;
-            TableToViewStr = listIt.tableName.toStdString();
+            tableToViewStr = listIt.tableName.toStdString();
             columnPaketList = listIt.columnPaketList;
-
+            TableToViewStr = tableToViewStr;
+            TableToViewStr[0] = toupper(tableToViewStr[0]);
             ok = f4();  // /app/src/main/res/layout/activity_main.xml
 
             ok = f5();  // /app/src/main/res/layout/recyclerview_item.xml
@@ -119,11 +129,11 @@ bool StartWindow::f1(){
     TableNameStr = tableNameStr;
     TableNameStr[0] = toupper(TableNameStr[0]);
 
-
+/*
     QMessageBox msgBox;
     msgBox.setText("hej!");
     msgBox.exec();
-
+*/
     myfile << TableNameStr << ".class" ;
 
     for( int i = 1; i < tableList.count(); i++){
@@ -315,14 +325,14 @@ bool StartWindow::f5(){
 
     foreach(ColumnPaket it, columnPaketList){
 
-    myfile << "<TextView\n";
-    myfile << "android:id=\"@+id/textView" + it.colName.toStdString() +"\"\n";
-    myfile << "android:layout_width=\"0dp\"\n";
-    myfile << "android:layout_height=\"wrap_content\"\n";
-    myfile << "android:layout_weight=\"1\"\n";
-    myfile << "android:textAlignment=\"viewStart\"\n";
-    myfile << "android:textAppearance=\"@style/TextAppearance.AppCompat.Medium\" />\n";
-    myfile << "    \n";
+        myfile << "<TextView\n";
+        myfile << "android:id=\"@+id/textView" + it.colName.toStdString() +"\"\n";
+        myfile << "android:layout_width=\"0dp\"\n";
+        myfile << "android:layout_height=\"wrap_content\"\n";
+        myfile << "android:layout_weight=\"1\"\n";
+        myfile << "android:textAlignment=\"viewStart\"\n";
+        myfile << "android:textAppearance=\"@style/TextAppearance.AppCompat.Medium\" />\n";
+        myfile << "    \n";
     }
     myfile << "</LinearLayout>\n";
     myfile << "    \n";
@@ -363,7 +373,7 @@ bool StartWindow::f6(){
     myfile << "class " << TableToViewStr << "ViewHolder extends RecyclerView.ViewHolder{\n";
 
     foreach(ColumnPaket it, columnPaketList){
-    myfile << "private final TextView " << it.colName.toStdString() << "TextView;\n";
+        myfile << "private final TextView " << it.colName.toStdString() << "TextView;\n";
     }
     myfile << "private final LinearLayout linearLayout" << TableToViewStr << ";\n";
     myfile << "\n";
@@ -371,7 +381,7 @@ bool StartWindow::f6(){
     myfile << "super(itemView);\n";
     foreach(ColumnPaket it, columnPaketList){
 
-    myfile << it.colName.toStdString() << "TextView = itemView.findViewById(R.id.textView" << it.colName.toStdString() << ");\n";
+        myfile << it.colName.toStdString() << "TextView = itemView.findViewById(R.id.textView" << it.colName.toStdString() << ");\n";
     }
     myfile << "linearLayout" << TableToViewStr << " = itemView.findViewById(R.id.linearLayout" << TableToViewStr << ");\n";
     myfile << "}\n";
@@ -413,12 +423,16 @@ bool StartWindow::f6(){
     myfile << "" << TableToViewStr << " current = m" << TableToViewStr << ".get(position);\n";
     foreach(ColumnPaket it, columnPaketList){
 
-    myfile << "holder." << it.colName.toStdString() << "TextView.setText(current.get" << it.colName.toStdString() << "());\n";
+        std::string ColName, colName = it.colName.toStdString();
+        ColName = colName;
+        ColName[0] = toupper(colName[0]);
+
+        myfile << "holder." << it.colName.toStdString() << "TextView.setText(current.get" << ColName << "());\n";
     }
     myfile << "\n";
     myfile << "} else {\n";
     myfile << "// Covers the case of data not being ready yet.\n";
-    myfile << "holder.dateTextView.setText(\"No data to show\");\n";
+    myfile << "holder." << columnPaketList[0].colName.toStdString() << "TextView.setText(\"No data to show\");\n";
     myfile << "}\n";
     myfile << "}\n";
     myfile << "\n";
@@ -437,7 +451,7 @@ bool StartWindow::f6(){
     myfile << "}\n";
     myfile << "}\n";
 
-    myfile << close();
+    myfile.close();
 
     return true;
 }
@@ -466,43 +480,48 @@ bool StartWindow::f7(){
 
 bool StartWindow::f8(){
 
-  myfile.open (startUi->lineEdit_2->text().toStdString() + "/app/src/main/java/" + package_as_path + "/MainActivity.java");
+    myfile.open (startUi->lineEdit_2->text().toStdString() + "/app/src/main/java/" + package_as_path + "/MainActivity.java");
 
-  myfile << "package " << package_as_path << ";\n";
+    myfile << "package " << package << ";\n";
 
-  myfile << "\n";
-  myfile << "import androidx.appcompat.app.AppCompatActivity;\n";
-  myfile << "import androidx.lifecycle.ViewModelProvider;\n";
-  myfile << "import androidx.recyclerview.widget.LinearLayoutManager;\n";
-  myfile << "import androidx.recyclerview.widget.RecyclerView;\n";
-  myfile << "\n";
-  myfile << "public class MainActivity extends AppCompatActivity {\n";
-  myfile << "\n";
-      myfile << "private " << TableToViewStr << "ViewModel m" << TableToViewStr << "ViewModel;\n";
-  myfile << "\n";
-      myfile << "@Override\n";
-      myfile << "protected void onCreate(Bundle savedInstanceState) {\n";
-          myfile << "super.onCreate(savedInstanceState);\n";
-  myfile << "\n";
-          myfile << "setContentView(R.layout.activity_main);\n";
-  myfile << "\n";
-          myfile << "RecyclerView recyclerView = findViewById(R.id.recyclerview_item);\n";
-          myfile << "final " << TableToViewStr << "ListAdapter adapter = new " << TableToViewStr << "ListAdapter(this);\n";
-          myfile << "recyclerView.setAdapter(adapter);\n";
-          myfile << "recyclerView.setLayoutManager(new LinearLayoutManager(this));\n";
-          myfile << "m" << TableToViewStr << "ViewModel = new ViewModelProvider(this).get(" << TableToViewStr << "ViewModel.class);\n";
-          myfile << "// Update the cached copy of the words in the adapter.\n";
-          myfile << "m" << TableToViewStr << "ViewModel.getAll" << TableToViewStr << "s().observe(this, adapter::set" << TableToViewStr << "s);\n";
-  myfile << "\n";
-  myfile << "\n";
-      myfile << "}\n";
-  myfile << "}\n";
+    myfile << "\n";
+    myfile << "import androidx.appcompat.app.AppCompatActivity;\n";
+    myfile << "import androidx.lifecycle.ViewModelProvider;\n";
+    myfile << "import androidx.recyclerview.widget.LinearLayoutManager;\n";
+    myfile << "import androidx.recyclerview.widget.RecyclerView;\n";
+    myfile << "\n";
+    myfile << "public class MainActivity extends AppCompatActivity {\n";
+    myfile << "\n";
+    myfile << "private " << TableToViewStr << "ViewModel m" << TableToViewStr << "ViewModel;\n";
+    myfile << "\n";
+    myfile << "@Override\n";
+    myfile << "protected void onCreate(Bundle savedInstanceState) {\n";
+    myfile << "super.onCreate(savedInstanceState);\n";
+    myfile << "\n";
+    myfile << "setContentView(R.layout.activity_main);\n";
+    myfile << "\n";
+    myfile << "RecyclerView recyclerView = findViewById(R.id.recyclerview_item);\n";
+    myfile << "final " << TableToViewStr << "ListAdapter adapter = new " << TableToViewStr << "ListAdapter(this);\n";
+    myfile << "recyclerView.setAdapter(adapter);\n";
+    myfile << "recyclerView.setLayoutManager(new LinearLayoutManager(this));\n";
+    myfile << "m" << TableToViewStr << "ViewModel = new ViewModelProvider(this).get(" << TableToViewStr << "ViewModel.class);\n";
+    myfile << "// Update the cached copy of the words in the adapter.\n";
+    myfile << "m" << TableToViewStr << "ViewModel.getAll" << TableToViewStr << "s().observe(this, adapter::set" << TableToViewStr << "s);\n";
+    myfile << "\n";
+    myfile << "\n";
+    myfile << "}\n";
+    myfile << "}\n";
 
-  myfile.close();
-  return true;
+    myfile.close();
+    return true;
 }
 
-void StartWindow::calculate_path(){
+bool StartWindow::calculate_path(){
+
+    QFileInfo check_file(startUi->lineEdit_2->text() + "/build.gradle");
+    // check if path exists and if yes: Is it really a file and no directory?
+    if(check_file.exists() && check_file.isFile()){
+
     iofile.open(startUi->lineEdit_2->text().toStdString() + "/app/src/main/AndroidManifest.xml");
 
     std::string str(std::istreambuf_iterator<char>{iofile}, {});
@@ -525,4 +544,6 @@ void StartWindow::calculate_path(){
     myfile.close();
 
     path_calculated = true;
+    return true;
+    } else return false;
 }

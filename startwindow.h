@@ -40,7 +40,7 @@ private:
     std::string package_as_path;
     std::string package;
     std::string dataBaseStr, DataBaseStr, tableNameStr, TableNameStr;
-    std::string TableToViewStr;
+    std::string TableToViewStr, tableToViewStr;
     bool path_calculated, ok, showTable;
     QList<ColumnPaket> columnPaketList;
 
@@ -52,7 +52,7 @@ private:
     QList<TableStruct> tableList;
 
     QList<TableStruct>::iterator it;
-//    QList<QHBoxLayout*> layoutList;
+    //    QList<QHBoxLayout*> layoutList;
 
     bool f1();
     bool f2();
@@ -62,6 +62,6 @@ private:
     bool f6();
     bool f7();
     bool f8();
-    void calculate_path();
+    bool calculate_path();
 };
 #endif // STARTWINDOW_H
