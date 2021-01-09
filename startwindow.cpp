@@ -31,29 +31,29 @@ void StartWindow::on_pushButton_clicked()
 {
     if(!path_calculated) ok = calculate_path();
     if(ok){
-    tableDialog = new TableWindow(this);
-    tableDialog->setData(startUi->lineEdit->text());
-    tableDialog->dir = startUi->lineEdit_2->text();
-    tableDialog->package = package;
-    tableDialog->package_as_path = package_as_path;
+        tableDialog = new TableWindow(this);
+        tableDialog->setData(startUi->lineEdit->text());
+        tableDialog->dir = startUi->lineEdit_2->text();
+        tableDialog->package = package;
+        tableDialog->package_as_path = package_as_path;
 
-    tableDialog->setModal(true);
+        tableDialog->setModal(true);
 
-    if(tableDialog->exec() == QDialog::Accepted) { //Check if they clicked Ok
-        QHBoxLayout *hL = new QHBoxLayout ();
-        QLabel *tableLabel = new QLabel();
-        QCheckBox *chBoxMakeTable = new QCheckBox();
-        tableLabel->setText(tableDialog->tableName);
-        hL->addWidget(tableLabel);
-        hL->addStretch();
-        hL->addWidget(chBoxMakeTable);
-        startUi->verticalLayout->addLayout(hL);
+        if(tableDialog->exec() == QDialog::Accepted) { //Check if they clicked Ok
+            QHBoxLayout *hL = new QHBoxLayout ();
+            QLabel *tableLabel = new QLabel();
+            QCheckBox *chBoxMakeTable = new QCheckBox();
+            tableLabel->setText(tableDialog->tableName);
+            hL->addWidget(tableLabel);
+            hL->addStretch();
+            hL->addWidget(chBoxMakeTable);
+            startUi->verticalLayout->addLayout(hL);
 
-        table.tableName = tableDialog->tableName;
-        table.columnPaketList = tableDialog->columnPaketList;
-        table.makeTable = chBoxMakeTable;
-        tableList.append(table);
-    }
+            table.tableName = tableDialog->tableName;
+            table.columnPaketList = tableDialog->columnPaketList;
+            table.makeTable = chBoxMakeTable;
+            tableList.append(table);
+        }
     } else {
         QMessageBox msgBox;
         msgBox.setText(startUi->lineEdit_2->text()+ "\ninnehåller inte ett giltigt Androidprojekt.\nSkapa ett (tomt) Androidprojekt innan du fortsätter");
@@ -129,7 +129,7 @@ bool StartWindow::f1(){
     TableNameStr = tableNameStr;
     TableNameStr[0] = toupper(TableNameStr[0]);
 
-/*
+    /*
     QMessageBox msgBox;
     msgBox.setText("hej!");
     msgBox.exec();
@@ -192,17 +192,10 @@ bool StartWindow::f2(){
     myfile.open(startUi->lineEdit_2->text().toStdString() + "/build.gradle", std::ios::app);
 
     myfile << "\n\next {\n";
-    myfile << "appCompatVersion = '1.2.0'\n";
-    myfile << "constraintLayoutVersion = '2.0.2'\n";
     myfile << "coreTestingVersion = '2.1.0'\n";
-    myfile << "lifecycleVersion = '2.2.0'\n";
+    myfile << "archLifecycleVersion = '2.2.0'\n";
     myfile << "materialVersion = '1.2.1'\n";
-    myfile << "roomVersion = '2.2.5'\n";
-    myfile << "// testing\n";
-    myfile << "junitVersion = '4.13.1'\n";
-    myfile << "espressoVersion = '3.1.0'\n";
-    myfile << "androidxJunitVersion = '1.1.2'\n";
-
+    myfile << "roomVersion = '2.2.6'\n";
     myfile << "}";
 
     myfile.close();
@@ -218,27 +211,29 @@ bool StartWindow::f3(){
 
     int start = str.find("dependencies {");
     int end = str.find("}", start +1);
-    str.replace(start+15,end- start -15,"    implementation \"androidx.appcompat:appcompat:$rootProject.appCompatVersion\"\n"
+    str.replace(start+15,end- start -15,
+                "implementation fileTree(dir: \"libs\", include: [\"*.jar\"])\n"
+                "implementation 'androidx.appcompat:appcompat:1.2.0'\n"
+                "implementation 'androidx.constraintlayout:constraintlayout:2.0.4'\n"
+                "testImplementation 'junit:junit:4.13.1'\n"
+                "androidTestImplementation 'androidx.test.ext:junit:1.1.2'\n"
+                "androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'\n"
+            "\n"
+                "// Room components\n"
                 "implementation \"androidx.room:room-runtime:$rootProject.roomVersion\"\n"
                 "annotationProcessor \"androidx.room:room-compiler:$rootProject.roomVersion\"\n"
                 "androidTestImplementation \"androidx.room:room-testing:$rootProject.roomVersion\"\n"
-                "// Lifecycle components\n"
-                "implementation \"androidx.lifecycle:lifecycle-viewmodel:$rootProject.lifecycleVersion\"\n"
-                "implementation \"androidx.lifecycle:lifecycle-livedata:$rootProject.lifecycleVersion\"\n"
-                "implementation \"androidx.lifecycle:lifecycle-common-java8:$rootProject.lifecycleVersion\"\n\n"
-
-                "// UI\n"
-                "implementation \"androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion\"\n"
-                "implementation \"com.google.android.material:material:$rootProject.materialVersion\"\n\n"
-
-                "// Testing\n"
-                "testImplementation \"junit:junit:$rootProject.junitVersion\"\n"
+            "\n"
+            "// Lifecycle components\n"
+                "implementation \"androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion\"\n"
+            "//    annotationProcessor \"androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion\"\n"
+            "\n"
+            "// UI\n"
+                "implementation \"com.google.android.material:material:$rootProject.materialVersion\"\n"
+            "\n"
+            "// Testing\n"
                 "androidTestImplementation \"androidx.arch.core:core-testing:$rootProject.coreTestingVersion\"\n"
-                "androidTestImplementation (\"androidx.test.espresso:espresso-core:$rootProject.espressoVersion\", {\n"
-                    "exclude group: 'com.android.support', module: 'support-annotations'\n"
-                "})\n"
-                "androidTestImplementation \"androidx.test.ext:junit:$rootProject.androidxJunitVersion\"\n"
-);
+            "\n");
 
     iofile.close();
 
@@ -272,12 +267,16 @@ bool StartWindow::f4(){
     myfile << "            android:orientation=\"horizontal\">\n";
     myfile << "\n";
     foreach(ColumnPaket it, columnPaketList){
+        if(it.colType == 1){
+
         myfile << "            <TextView\n";
         myfile << "                android:layout_width=\"0dp\"\n";
         myfile << "                android:layout_height=\"wrap_content\"\n";
         myfile << "                android:layout_weight=\"1\"\n";
         myfile << "                android:text=\"" + it.colName.toStdString() + "\" />\n";
         myfile << "\n";
+
+        }
     }
     myfile << "\n";
     myfile << "        </LinearLayout>\n";
@@ -325,6 +324,7 @@ bool StartWindow::f5(){
 
     foreach(ColumnPaket it, columnPaketList){
 
+        if(it.colType == 1){
         myfile << "<TextView\n";
         myfile << "android:id=\"@+id/textView" + it.colName.toStdString() +"\"\n";
         myfile << "android:layout_width=\"0dp\"\n";
@@ -333,6 +333,7 @@ bool StartWindow::f5(){
         myfile << "android:textAlignment=\"viewStart\"\n";
         myfile << "android:textAppearance=\"@style/TextAppearance.AppCompat.Medium\" />\n";
         myfile << "    \n";
+        }
     }
     myfile << "</LinearLayout>\n";
     myfile << "    \n";
@@ -373,15 +374,18 @@ bool StartWindow::f6(){
     myfile << "class " << TableToViewStr << "ViewHolder extends RecyclerView.ViewHolder{\n";
 
     foreach(ColumnPaket it, columnPaketList){
+        if(it.colType == 1){
         myfile << "private final TextView " << it.colName.toStdString() << "TextView;\n";
+        }
     }
     myfile << "private final LinearLayout linearLayout" << TableToViewStr << ";\n";
     myfile << "\n";
     myfile << "private " << TableToViewStr << "ViewHolder(View itemView) {\n";
     myfile << "super(itemView);\n";
     foreach(ColumnPaket it, columnPaketList){
-
+        if(it.colType == 1){
         myfile << it.colName.toStdString() << "TextView = itemView.findViewById(R.id.textView" << it.colName.toStdString() << ");\n";
+        }
     }
     myfile << "linearLayout" << TableToViewStr << " = itemView.findViewById(R.id.linearLayout" << TableToViewStr << ");\n";
     myfile << "}\n";
@@ -422,18 +426,16 @@ bool StartWindow::f6(){
     myfile << "if (m" << TableToViewStr << " != null) {\n";
     myfile << "" << TableToViewStr << " current = m" << TableToViewStr << ".get(position);\n";
     foreach(ColumnPaket it, columnPaketList){
-
+        if(it.colType == 1){
         std::string ColName, colName = it.colName.toStdString();
         ColName = colName;
         ColName[0] = toupper(colName[0]);
 
         myfile << "holder." << it.colName.toStdString() << "TextView.setText(current.get" << ColName << "());\n";
+        }
     }
     myfile << "\n";
-    myfile << "} else {\n";
-    myfile << "// Covers the case of data not being ready yet.\n";
-    myfile << "holder." << columnPaketList[0].colName.toStdString() << "TextView.setText(\"No data to show\");\n";
-    myfile << "}\n";
+    myfile << "}";
     myfile << "}\n";
     myfile << "\n";
     myfile << "void set" << TableToViewStr << "s(List<" << TableToViewStr << "> " << TableToViewStr << "s){\n";
@@ -485,6 +487,8 @@ bool StartWindow::f8(){
     myfile << "package " << package << ";\n";
 
     myfile << "\n";
+    myfile << "import android.os.Bundle;\n";
+    myfile << "\n";
     myfile << "import androidx.appcompat.app.AppCompatActivity;\n";
     myfile << "import androidx.lifecycle.ViewModelProvider;\n";
     myfile << "import androidx.recyclerview.widget.LinearLayoutManager;\n";
@@ -504,8 +508,25 @@ bool StartWindow::f8(){
     myfile << "final " << TableToViewStr << "ListAdapter adapter = new " << TableToViewStr << "ListAdapter(this);\n";
     myfile << "recyclerView.setAdapter(adapter);\n";
     myfile << "recyclerView.setLayoutManager(new LinearLayoutManager(this));\n";
-    myfile << "m" << TableToViewStr << "ViewModel = new ViewModelProvider(this).get(" << TableToViewStr << "ViewModel.class);\n";
-    myfile << "// Update the cached copy of the words in the adapter.\n";
+    myfile << "m" << TableToViewStr << "ViewModel = new ViewModelProvider(this).get(" << TableToViewStr << "ViewModel.class);\n\n";
+
+    myfile << "// Inserting sample data\n";
+    myfile << TableToViewStr << " m" << TableToViewStr << " = new " << TableToViewStr << "()\n";
+    foreach(ColumnPaket it, columnPaketList){
+        if(it.colType == 1){
+            myfile << "m" << TableToViewStr << ".set" << it.colName.toStdString() << "(\"Hej ..\");\n";
+            myfile << "m" << TableToViewStr << "ViewModel.insert(m" << TableToViewStr << ");\n";
+        }
+    }
+    myfile << "m" << TableToViewStr << " = new " << TableToViewStr << "()\n";
+    foreach(ColumnPaket it, columnPaketList){
+        if(it.colType == 1){
+            myfile << "m" << TableToViewStr << ".set" << it.colName.toStdString() << "(\".. värld!\");\n";
+            myfile << "m" << TableToViewStr << "ViewModel.insert(m" << TableToViewStr << ");\n";
+        }
+    }
+
+    myfile << "\n// Update the cached copy of the words in the adapter.\n";
     myfile << "m" << TableToViewStr << "ViewModel.getAll" << TableToViewStr << "s().observe(this, adapter::set" << TableToViewStr << "s);\n";
     myfile << "\n";
     myfile << "\n";
@@ -522,28 +543,28 @@ bool StartWindow::calculate_path(){
     // check if path exists and if yes: Is it really a file and no directory?
     if(check_file.exists() && check_file.isFile()){
 
-    iofile.open(startUi->lineEdit_2->text().toStdString() + "/app/src/main/AndroidManifest.xml");
+        iofile.open(startUi->lineEdit_2->text().toStdString() + "/app/src/main/AndroidManifest.xml");
 
-    std::string str(std::istreambuf_iterator<char>{iofile}, {});
-    iofile.close();
+        std::string str(std::istreambuf_iterator<char>{iofile}, {});
+        iofile.close();
 
-    int start = str.find("package=\"");
-    int end = str.find("\"", start +9);
-    package = str.substr(start+9,end- start -9);
-    myfile.open(startUi->lineEdit_2->text().toStdString() + "/package.pack");
-    myfile << package;
-    package_as_path = package;
-    int pos;
-    pos = package_as_path.find(".");
-    while (pos != -1 ) {
-        package_as_path.replace(pos, 1 ,"/");
-        pos = package_as_path.find(".", pos + 1);
+        int start = str.find("package=\"");
+        int end = str.find("\"", start +9);
+        package = str.substr(start+9,end- start -9);
+        myfile.open(startUi->lineEdit_2->text().toStdString() + "/package.pack");
+        myfile << package;
+        package_as_path = package;
+        int pos;
+        pos = package_as_path.find(".");
+        while (pos != -1 ) {
+            package_as_path.replace(pos, 1 ,"/");
+            pos = package_as_path.find(".", pos + 1);
 
-    }
-    myfile << "\n\n" << package_as_path;
-    myfile.close();
+        }
+        myfile << "\n\n" << package_as_path;
+        myfile.close();
 
-    path_calculated = true;
-    return true;
+        path_calculated = true;
+        return true;
     } else return false;
 }
