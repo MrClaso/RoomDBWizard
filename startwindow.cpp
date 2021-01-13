@@ -511,14 +511,14 @@ bool StartWindow::f8(){
     myfile << "m" << TableToViewStr << "ViewModel = new ViewModelProvider(this).get(" << TableToViewStr << "ViewModel.class);\n\n";
 
     myfile << "// Inserting sample data\n";
-    myfile << TableToViewStr << " m" << TableToViewStr << " = new " << TableToViewStr << "()\n";
+    myfile << TableToViewStr << " m" << TableToViewStr << " = new " << TableToViewStr << "();\n";
     foreach(ColumnPaket it, columnPaketList){
         if(it.colType == 1){
             myfile << "m" << TableToViewStr << ".set" << it.colName.toStdString() << "(\"Hej ..\");\n";
             myfile << "m" << TableToViewStr << "ViewModel.insert(m" << TableToViewStr << ");\n";
         }
     }
-    myfile << "m" << TableToViewStr << " = new " << TableToViewStr << "()\n";
+    myfile << "m" << TableToViewStr << " = new " << TableToViewStr << "();\n";
     foreach(ColumnPaket it, columnPaketList){
         if(it.colType == 1){
             myfile << "m" << TableToViewStr << ".set" << it.colName.toStdString() << "(\".. värld!\");\n";
