@@ -26,7 +26,7 @@ private:
     QCheckBox *checkBoxDelete;
     QLineEdit *lEColumnName;
     QComboBox *comboBoxType;
-    QCheckBox *checkBoxPrimary;
+    QCheckBox *checkBoxPrimary, *checkBoxAI, *checkBoxIndex;
     QCheckBox *checkBoxUniqe;
     QHBoxLayout *hL;
 
@@ -42,6 +42,8 @@ private:
         QComboBox *type;
         QCheckBox *primary;
         QCheckBox *unique;
+        QCheckBox *AI;
+        QCheckBox *index;
 
     };
     columnStruct column;

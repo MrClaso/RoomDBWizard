@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>TableWindow</class>
- <widget name="TableWindow" class="QDialog">
+ <widget class="QDialog" name="TableWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,13 +13,21 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="centralwidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>641</width>
+     <height>541</height>
+    </rect>
+   </property>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>50</x>
       <y>10</y>
-      <width>516</width>
+      <width>591</width>
       <height>521</height>
      </rect>
     </property>
@@ -59,7 +68,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>200</width>
+           <width>170</width>
            <height>0</height>
           </size>
          </property>
@@ -128,6 +137,20 @@
          </property>
          <property name="text">
           <string>Unik</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>A.I.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Index</string>
          </property>
         </widget>
        </item>
@@ -245,7 +268,16 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>3</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>

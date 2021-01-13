@@ -15,6 +15,8 @@ TableWindow::TableWindow(QWidget *parent) :
     comboBoxType = new QComboBox ();
     checkBoxPrimary = new QCheckBox ();
     checkBoxUniqe = new QCheckBox ();
+    checkBoxAI = new QCheckBox();
+    checkBoxIndex = new QCheckBox();
     hL = new QHBoxLayout ();
 
     comboBoxType->addItem(comboBoxOption3String, 3);
@@ -37,6 +39,10 @@ TableWindow::TableWindow(QWidget *parent) :
 
     hL->addWidget(checkBoxUniqe);
 
+    hL->addWidget(checkBoxAI);
+    hL->addSpacing(30);
+
+    hL-> addWidget(checkBoxIndex);
     hL->addStretch();
 
     ui->verticalLayout_2->addLayout(hL);
@@ -46,6 +52,8 @@ TableWindow::TableWindow(QWidget *parent) :
     column.type = comboBoxType;
     column.primary = checkBoxPrimary;
     column.unique = checkBoxUniqe;
+    column.AI = checkBoxAI;
+    column.index = checkBoxIndex;
 
     columnList.append(column);
 
@@ -136,18 +144,24 @@ void TableWindow::on_pushButton_clicked()
     myfile << "import androidx.room.Index;\n";
     myfile << "import androidx.room.PrimaryKey;\n\n";
 
-    myfile << "@Entity(tableName = \"" << ui->lineEdit->text().toStdString() << "\", indices = {@Index(value = {" << "\"" << prim_str << "\"}, unique = true)})" << "\n";
+    myfile << "@Entity(tableName = \"" << ui->lineEdit->text().toStdString() << "\")\n";
     myfile << "public class " << TableNameStr << " {\n\n";
 
-    myfile << "@PrimaryKey(autoGenerate = true)\n";
     myfile << "private " << type_str << " " << prim_str << ";\n\n";
 
     // TODO  Something fishy here. Primary key, index, column info!!???
     foreach (columnStruct i, columnList) {
-        if(!i.primary->isChecked()){
-            myfile << "@ColumnInfo(name = \"" << i.name->text().toStdString() << "\")\n";
-            myfile << "private " << i.type->currentText().toStdString() << " " << i.name->text().toStdString() << ";\n\n";
+        if(i.primary->isChecked()){
+            myfile << "@PrimaryKey";
+            if(i.AI->isChecked()){
+                myfile << "(autoGenerate = true)";
+            }
+            myfile << "\n";
+
         }
+        myfile << "@ColumnInfo(name = \"" << i.name->text().toStdString() << "\")\n";
+        myfile << "private " << i.type->currentText().toStdString() << " " << i.name->text().toStdString() << ";\n\n";
+
 
     }
 
