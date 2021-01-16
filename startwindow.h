@@ -2,7 +2,6 @@
 #define STARTWINDOW_H
 #include "tablewindow.h"
 #include "ui_tablewindow.h"
-#include "general.h"
 
 #include <QDialog>
 #include <QFileDialog>

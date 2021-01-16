@@ -2,7 +2,7 @@
 #include "ui_startwindow.h"
 #include "tablewindow.h"
 #include "ui_tablewindow.h"
-
+#include "columnpaket.h"
 #include <QMessageBox>
 #include <QFileInfo>
 
@@ -273,7 +273,7 @@ bool StartWindow::f4(){
         myfile << "                android:layout_width=\"0dp\"\n";
         myfile << "                android:layout_height=\"wrap_content\"\n";
         myfile << "                android:layout_weight=\"1\"\n";
-        myfile << "                android:text=\"" + it.colName.toStdString() + "\" />\n";
+        myfile << "                android:text=\"" + it.toUpper() + "\" />\n";
         myfile << "\n";
 
         }
@@ -326,7 +326,7 @@ bool StartWindow::f5(){
 
         if(it.colType == 1){
         myfile << "<TextView\n";
-        myfile << "android:id=\"@+id/textView" + it.colName.toStdString() +"\"\n";
+        myfile << "android:id=\"@+id/textView" + it.toUpper() +"\"\n";
         myfile << "android:layout_width=\"0dp\"\n";
         myfile << "android:layout_height=\"wrap_content\"\n";
         myfile << "android:layout_weight=\"1\"\n";
@@ -384,7 +384,7 @@ bool StartWindow::f6(){
     myfile << "super(itemView);\n";
     foreach(ColumnPaket it, columnPaketList){
         if(it.colType == 1){
-        myfile << it.colName.toStdString() << "TextView = itemView.findViewById(R.id.textView" << it.colName.toStdString() << ");\n";
+        myfile << it.colName.toStdString() << "TextView = itemView.findViewById(R.id.textView" << it.toUpper() << ");\n";
         }
     }
     myfile << "linearLayout" << TableToViewStr << " = itemView.findViewById(R.id.linearLayout" << TableToViewStr << ");\n";
@@ -427,11 +427,8 @@ bool StartWindow::f6(){
     myfile << "" << TableToViewStr << " current = m" << TableToViewStr << ".get(position);\n";
     foreach(ColumnPaket it, columnPaketList){
         if(it.colType == 1){
-        std::string ColName, colName = it.colName.toStdString();
-        ColName = colName;
-        ColName[0] = toupper(colName[0]);
 
-        myfile << "holder." << it.colName.toStdString() << "TextView.setText(current.get" << ColName << "());\n";
+        myfile << "holder." << it.colName.toStdString() << "TextView.setText(current.get" << it.toUpper() << "());\n";
         }
     }
     myfile << "\n";
@@ -514,14 +511,14 @@ bool StartWindow::f8(){
     myfile << TableToViewStr << " m" << TableToViewStr << " = new " << TableToViewStr << "();\n";
     foreach(ColumnPaket it, columnPaketList){
         if(it.colType == 1){
-            myfile << "m" << TableToViewStr << ".set" << it.colName.toStdString() << "(\"Hej ..\");\n";
+            myfile << "m" << TableToViewStr << ".set" << it.toUpper() << "(\"Hej ..\");\n";
             myfile << "m" << TableToViewStr << "ViewModel.insert(m" << TableToViewStr << ");\n";
         }
     }
     myfile << "m" << TableToViewStr << " = new " << TableToViewStr << "();\n";
     foreach(ColumnPaket it, columnPaketList){
         if(it.colType == 1){
-            myfile << "m" << TableToViewStr << ".set" << it.colName.toStdString() << "(\".. värld!\");\n";
+            myfile << "m" << TableToViewStr << ".set" << it.toUpper() << "(\".. värld!\");\n";
             myfile << "m" << TableToViewStr << "ViewModel.insert(m" << TableToViewStr << ");\n";
         }
     }

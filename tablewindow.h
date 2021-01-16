@@ -1,7 +1,6 @@
 #ifndef TABLEWINDOW_H
 #define TABLEWINDOW_H
 
-#include "general.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QVBoxLayout>
@@ -11,6 +10,8 @@
 #include <QSpacerItem>
 #include <iostream>
 #include <fstream>
+
+#include "columnpaket.h"
 
 namespace Ui {
 class TableWindow;

@@ -16,7 +16,6 @@ TableWindow::TableWindow(QWidget *parent) :
     checkBoxPrimary = new QCheckBox ();
     checkBoxUniqe = new QCheckBox ();
     checkBoxAI = new QCheckBox();
-    checkBoxIndex = new QCheckBox();
     hL = new QHBoxLayout ();
 
     comboBoxType->addItem(comboBoxOption3String, 3);
@@ -26,23 +25,18 @@ TableWindow::TableWindow(QWidget *parent) :
     lEColumnName->setFixedWidth(170);
     hL->addSpacing(10);
     hL->addWidget(checkBoxDelete);
-    hL->addSpacing(20);
+    hL->addSpacing(12);
 
     hL->addWidget(lEColumnName);
     hL->addSpacing(10);
 
     hL->addWidget(comboBoxType);
-    hL->addSpacing(75);
+    hL->addSpacing(10);
 
     hL->addWidget(checkBoxPrimary);
-    hL->addSpacing(30);
-
+    hL->addWidget(checkBoxAI);
     hL->addWidget(checkBoxUniqe);
 
-    hL->addWidget(checkBoxAI);
-    hL->addSpacing(30);
-
-    hL-> addWidget(checkBoxIndex);
     hL->addStretch();
 
     ui->verticalLayout_2->addLayout(hL);
@@ -53,11 +47,8 @@ TableWindow::TableWindow(QWidget *parent) :
     column.primary = checkBoxPrimary;
     column.unique = checkBoxUniqe;
     column.AI = checkBoxAI;
-    column.index = checkBoxIndex;
 
     columnList.append(column);
-
-
 }
 
 
@@ -72,15 +63,17 @@ void TableWindow::setData(QString dBaseName){
 
 void TableWindow::on_pushButton_2_clicked()
 {
-    columnPaket.colName = lEColumnName->text();
-    columnPaket.colType = comboBoxType->currentData();
-    columnPaketList.append(columnPaket);
+    ColumnPaket *columnPaket = new ColumnPaket();
+    columnPaket->colName = lEColumnName->text();
+    columnPaket->colType = comboBoxType->currentData();
+    columnPaketList.append(*columnPaket);
 
     checkBoxDelete = new QCheckBox ();
     lEColumnName = new QLineEdit ();
     comboBoxType = new QComboBox ();
     checkBoxPrimary = new QCheckBox ();
     checkBoxUniqe = new QCheckBox ();
+    checkBoxAI = new QCheckBox();
     hL = new QHBoxLayout ();
 
     comboBoxType->addItem(comboBoxOption3String, 3);
@@ -90,17 +83,16 @@ void TableWindow::on_pushButton_2_clicked()
     lEColumnName->setFixedWidth(170);
     hL->addSpacing(10);
     hL->addWidget(checkBoxDelete);
-    hL->addSpacing(20);
+    hL->addSpacing(12);
 
     hL->addWidget(lEColumnName);
     hL->addSpacing(10);
 
     hL->addWidget(comboBoxType);
-    hL->addSpacing(75);
+    hL->addSpacing(10);
 
     hL->addWidget(checkBoxPrimary);
-    hL->addSpacing(30);
-
+    hL->addWidget(checkBoxAI);
     hL->addWidget(checkBoxUniqe);
     hL->addStretch();
 
@@ -111,6 +103,7 @@ void TableWindow::on_pushButton_2_clicked()
     column.type = comboBoxType;
     column.primary = checkBoxPrimary;
     column.unique = checkBoxUniqe;
+    column.AI = checkBoxAI;
 
     columnList.append(column);
 
@@ -119,18 +112,14 @@ void TableWindow::on_pushButton_2_clicked()
 
 void TableWindow::on_pushButton_clicked()
 {
-    columnPaket.colName = lEColumnName->text();
-    columnPaket.colType = comboBoxType->currentData();
-    columnPaketList.append(columnPaket);
+    std::string prim_str, type_str, colNameStr, ColNameStr, TableNameStr, DBaseNameStr;
+
+    ColumnPaket *columnPaket = new ColumnPaket();
+    columnPaket->colName = lEColumnName->text();
+    columnPaket->colType = comboBoxType->currentData();
+    columnPaketList.append(*columnPaket);
 
     tableName = ui->lineEdit->text();
-    std::string prim_str, type_str, colNameStr, ColNameStr, TableNameStr, DBaseNameStr;
-    foreach (columnStruct i, columnList) {
-        if(i.primary->isChecked()) {
-            prim_str = i.name->text().toStdString();
-            type_str = i.type->currentText().toStdString();
-        }
-    }
 
     std::string tableNameStr = ui->lineEdit->text().toStdString();
     TableNameStr = tableNameStr;
@@ -144,12 +133,24 @@ void TableWindow::on_pushButton_clicked()
     myfile << "import androidx.room.Index;\n";
     myfile << "import androidx.room.PrimaryKey;\n\n";
 
-    myfile << "@Entity(tableName = \"" << ui->lineEdit->text().toStdString() << "\")\n";
+    myfile << "@Entity(tableName = \"" << ui->lineEdit->text().toStdString() << "\"";
+
+    int numUnique = 0;
+    foreach (columnStruct i, columnList) {
+        if( i.unique->isChecked()){
+            if( numUnique == 0)
+                myfile << ", indices = {@Index(value = \"" << i.name->text().toStdString() << "\", unique = true)";
+            else
+                myfile << ", @Index(value = \"" << i.name->text().toStdString() << "\", unique = true)";
+            numUnique++;
+        }
+    }
+    if( numUnique > 0)     myfile << "}";
+
+    myfile << ")\n";
+
     myfile << "public class " << TableNameStr << " {\n\n";
 
-    myfile << "private " << type_str << " " << prim_str << ";\n\n";
-
-    // TODO  Something fishy here. Primary key, index, column info!!???
     foreach (columnStruct i, columnList) {
         if(i.primary->isChecked()){
             myfile << "@PrimaryKey";
