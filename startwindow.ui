@@ -118,7 +118,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <selectedon>../../../../../usr/share/icons/breeze/actions/16/document-open-folder.svg</selectedon>
+     <selectedon>Icons/document-open.svg</selectedon>
     </iconset>
    </property>
   </widget>
