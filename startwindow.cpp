@@ -5,20 +5,22 @@
 #include "columnpaket.h"
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QSpacerItem>
+#include <QSizePolicy>
+
+QSpacerItem* verticalSpacer;
 
 StartWindow::StartWindow(QWidget *parent)
     : QDialog(parent)
     , startUi(new Ui::StartWindow)
 {
-    /*
- *     startUi->lineEdit->setStyleSheet("QLineEdit {  border: 2px solid;"
-                                     "border-radius: 5px;}");
-*/
-
     startUi->setupUi(this);
 
-    startUi->widget->setStyleSheet("border: 2px solid grey");
+//    startUi->widget->setStyleSheet("border: 2px solid grey");
     path_calculated = false;
+//    verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+//    startUi->verticalLayout->addSpacerItem(verticalSpacer);
+
 }
 
 StartWindow::~StartWindow()
@@ -40,15 +42,19 @@ void StartWindow::on_pushButton_clicked()
         tableDialog->setModal(true);
 
         if(tableDialog->exec() == QDialog::Accepted) { //Check if they clicked Ok
+            startUi->verticalLayout->removeItem(verticalSpacer);
+            delete(verticalSpacer);
+
             QHBoxLayout *hL = new QHBoxLayout ();
             QLabel *tableLabel = new QLabel();
             QCheckBox *chBoxMakeTable = new QCheckBox();
             tableLabel->setText(tableDialog->tableName);
+            hL->addWidget(chBoxMakeTable);
             hL->addWidget(tableLabel);
             hL->addStretch();
-            hL->addWidget(chBoxMakeTable);
             startUi->verticalLayout->addLayout(hL);
-
+            verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+            startUi->verticalLayout->addSpacerItem(verticalSpacer);
             table.tableName = tableDialog->tableName;
             table.columnPaketList = tableDialog->columnPaketList;
             table.makeTable = chBoxMakeTable;
