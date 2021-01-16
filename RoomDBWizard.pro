@@ -16,12 +16,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    columnpaket.cpp \
     main.cpp \
     startwindow.cpp \
     tablewindow.cpp
 
 HEADERS += \
-    general.h \
+    columnpaket.h \
     startwindow.h \
     tablewindow.h
 
@@ -33,3 +34,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    icon.qrc

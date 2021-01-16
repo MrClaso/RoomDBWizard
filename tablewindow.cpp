@@ -15,6 +15,7 @@ TableWindow::TableWindow(QWidget *parent) :
     comboBoxType = new QComboBox ();
     checkBoxPrimary = new QCheckBox ();
     checkBoxUniqe = new QCheckBox ();
+    checkBoxAI = new QCheckBox();
     hL = new QHBoxLayout ();
 
     comboBoxType->addItem(comboBoxOption3String, 3);
@@ -24,17 +25,16 @@ TableWindow::TableWindow(QWidget *parent) :
     lEColumnName->setFixedWidth(170);
     hL->addSpacing(10);
     hL->addWidget(checkBoxDelete);
-    hL->addSpacing(20);
+    hL->addSpacing(12);
 
     hL->addWidget(lEColumnName);
     hL->addSpacing(10);
 
     hL->addWidget(comboBoxType);
-    hL->addSpacing(75);
+    hL->addSpacing(10);
 
     hL->addWidget(checkBoxPrimary);
-    hL->addSpacing(30);
-
+    hL->addWidget(checkBoxAI);
     hL->addWidget(checkBoxUniqe);
 
     hL->addStretch();
@@ -46,10 +46,9 @@ TableWindow::TableWindow(QWidget *parent) :
     column.type = comboBoxType;
     column.primary = checkBoxPrimary;
     column.unique = checkBoxUniqe;
+    column.AI = checkBoxAI;
 
     columnList.append(column);
-
-
 }
 
 
@@ -64,15 +63,17 @@ void TableWindow::setData(QString dBaseName){
 
 void TableWindow::on_pushButton_2_clicked()
 {
-    columnPaket.colName = lEColumnName->text();
-    columnPaket.colType = comboBoxType->currentData();
-    columnPaketList.append(columnPaket);
+    ColumnPaket *columnPaket = new ColumnPaket();
+    columnPaket->colName = lEColumnName->text();
+    columnPaket->colType = comboBoxType->currentData();
+    columnPaketList.append(*columnPaket);
 
     checkBoxDelete = new QCheckBox ();
     lEColumnName = new QLineEdit ();
     comboBoxType = new QComboBox ();
     checkBoxPrimary = new QCheckBox ();
     checkBoxUniqe = new QCheckBox ();
+    checkBoxAI = new QCheckBox();
     hL = new QHBoxLayout ();
 
     comboBoxType->addItem(comboBoxOption3String, 3);
@@ -82,17 +83,16 @@ void TableWindow::on_pushButton_2_clicked()
     lEColumnName->setFixedWidth(170);
     hL->addSpacing(10);
     hL->addWidget(checkBoxDelete);
-    hL->addSpacing(20);
+    hL->addSpacing(12);
 
     hL->addWidget(lEColumnName);
     hL->addSpacing(10);
 
     hL->addWidget(comboBoxType);
-    hL->addSpacing(75);
+    hL->addSpacing(10);
 
     hL->addWidget(checkBoxPrimary);
-    hL->addSpacing(30);
-
+    hL->addWidget(checkBoxAI);
     hL->addWidget(checkBoxUniqe);
     hL->addStretch();
 
@@ -103,6 +103,7 @@ void TableWindow::on_pushButton_2_clicked()
     column.type = comboBoxType;
     column.primary = checkBoxPrimary;
     column.unique = checkBoxUniqe;
+    column.AI = checkBoxAI;
 
     columnList.append(column);
 
@@ -111,18 +112,14 @@ void TableWindow::on_pushButton_2_clicked()
 
 void TableWindow::on_pushButton_clicked()
 {
-    columnPaket.colName = lEColumnName->text();
-    columnPaket.colType = comboBoxType->currentData();
-    columnPaketList.append(columnPaket);
+    std::string prim_str, type_str, colNameStr, ColNameStr, TableNameStr, DBaseNameStr;
+
+    ColumnPaket *columnPaket = new ColumnPaket();
+    columnPaket->colName = lEColumnName->text();
+    columnPaket->colType = comboBoxType->currentData();
+    columnPaketList.append(*columnPaket);
 
     tableName = ui->lineEdit->text();
-    std::string prim_str, type_str, colNameStr, ColNameStr, TableNameStr, DBaseNameStr;
-    foreach (columnStruct i, columnList) {
-        if(i.primary->isChecked()) {
-            prim_str = i.name->text().toStdString();
-            type_str = i.type->currentText().toStdString();
-        }
-    }
 
     std::string tableNameStr = ui->lineEdit->text().toStdString();
     TableNameStr = tableNameStr;
@@ -136,24 +133,42 @@ void TableWindow::on_pushButton_clicked()
     myfile << "import androidx.room.Index;\n";
     myfile << "import androidx.room.PrimaryKey;\n\n";
 
-    myfile << "@Entity(tableName = \"" << ui->lineEdit->text().toStdString() << "\", indices = {@Index(value = {" << "\"" << prim_str << "\"}, unique = true)})" << "\n";
+    myfile << "@Entity(tableName = \"" << ui->lineEdit->text().toStdString() << "\"";
+
+    int numUnique = 0;
+    foreach (columnStruct i, columnList) {
+        if( i.unique->isChecked()){
+            if( numUnique == 0)
+                myfile << ", indices = {@Index(value = \"" << i.name->text().toStdString() << "\", unique = true)";
+            else
+                myfile << ", @Index(value = \"" << i.name->text().toStdString() << "\", unique = true)";
+            numUnique++;
+        }
+    }
+    if( numUnique > 0)     myfile << "}";
+
+    myfile << ")\n";
+
     myfile << "public class " << TableNameStr << " {\n\n";
 
-    myfile << "@PrimaryKey(autoGenerate = true)\n";
-    myfile << "private " << type_str << " " << prim_str << ";\n\n";
-
-
     foreach (columnStruct i, columnList) {
-        if(!i.primary->isChecked()){
-            myfile << "@ColumnInfo(name = \"" << i.name->text().toStdString() << "\")\n";
-            myfile << "private " << i.type->currentText().toStdString() << " " << i.name->text().toStdString() << ";\n\n";
+        if(i.primary->isChecked()){
+            myfile << "@PrimaryKey";
+            if(i.AI->isChecked()){
+                myfile << "(autoGenerate = true)";
+            }
+            myfile << "\n";
+
         }
+        myfile << "@ColumnInfo(name = \"" << i.name->text().toStdString() << "\")\n";
+        myfile << "private " << i.type->currentText().toStdString() << " " << i.name->text().toStdString() << ";\n\n";
+
 
     }
 
     myfile << "\n\n/*\n";
-     myfile << "* Getters and Setters\n";
-     myfile << "* */\n";
+    myfile << "* Getters and Setters\n";
+    myfile << "* */\n";
 
     foreach (columnStruct i, columnList) {
         colNameStr = i.name->text().toStdString();
@@ -187,18 +202,18 @@ void TableWindow::on_pushButton_clicked()
     myfile << "public interface " << TableNameStr <<"Dao {\n";
     myfile << "\n";
     myfile << "\n";
-        myfile << "@Query(\"SELECT * FROM " << tableNameStr << "\")\n";
-        myfile << "LiveData<List<" << TableNameStr << ">> getAll" << TableNameStr << "s();\n";
+    myfile << "@Query(\"SELECT * FROM " << tableNameStr << "\")\n";
+    myfile << "LiveData<List<" << TableNameStr << ">> getAll" << TableNameStr << "s();\n";
     myfile << "\n";
     myfile << "\n";
-        myfile << "@Insert\n";
-        myfile << "void insert(" << TableNameStr << " " << tableNameStr <<");\n";
+    myfile << "@Insert\n";
+    myfile << "void insert(" << TableNameStr << " " << tableNameStr <<");\n";
     myfile << "\n";
-        myfile << "@Delete\n";
-        myfile << "void delete(" << TableNameStr << " " << tableNameStr <<");\n";
+    myfile << "@Delete\n";
+    myfile << "void delete(" << TableNameStr << " " << tableNameStr <<");\n";
     myfile << "\n";
-        myfile << "@Update\n";
-        myfile << "void update(" << TableNameStr << " " << tableNameStr <<");\n";
+    myfile << "@Update\n";
+    myfile << "void update(" << TableNameStr << " " << tableNameStr <<");\n";
     myfile << "\n";
     myfile << "}\n";
     myfile.close();
@@ -215,47 +230,47 @@ void TableWindow::on_pushButton_clicked()
     myfile << "import androidx.lifecycle.LiveData;\n";
     myfile << "import java.util.List;\n";
     myfile << "public class " << TableNameStr << "Repository {\n";
-        myfile << "private final " << TableNameStr << "Dao m" << TableNameStr << "Dao;\n";
-        myfile << "private final LiveData<List<" << TableNameStr << ">> mAll" << TableNameStr <<"s;\n";
-        myfile << "// Note that in order to unit test the WordRepository, you have to remove the Application\n";
-        myfile << "// dependency. This adds complexity and much more code, and this sample is not about testing.\n";
-        myfile << "// See the BasicSample in the android-architecture-components repository at\n";
-        myfile << "// https://github.com/googlesamples\n";
-        myfile << TableNameStr << "Repository(Application application) {\n";
-            myfile << DBaseNameStr << "RoomDatabase db = "<< DBaseNameStr << "RoomDatabase.getDatabase(application);\n";
-            myfile << "m" << TableNameStr << "Dao = db." << tableNameStr << "Dao();\n";
-            myfile << "mAll" << TableNameStr << "s = m" << TableNameStr << "Dao.getAll" << TableNameStr << "s();\n";
+    myfile << "private final " << TableNameStr << "Dao m" << TableNameStr << "Dao;\n";
+    myfile << "private final LiveData<List<" << TableNameStr << ">> mAll" << TableNameStr <<"s;\n";
+    myfile << "// Note that in order to unit test the WordRepository, you have to remove the Application\n";
+    myfile << "// dependency. This adds complexity and much more code, and this sample is not about testing.\n";
+    myfile << "// See the BasicSample in the android-architecture-components repository at\n";
+    myfile << "// https://github.com/googlesamples\n";
+    myfile << TableNameStr << "Repository(Application application) {\n";
+    myfile << DBaseNameStr << "RoomDatabase db = "<< DBaseNameStr << "RoomDatabase.getDatabase(application);\n";
+    myfile << "m" << TableNameStr << "Dao = db." << tableNameStr << "Dao();\n";
+    myfile << "mAll" << TableNameStr << "s = m" << TableNameStr << "Dao.getAll" << TableNameStr << "s();\n";
     myfile << "\n";
     myfile << "\n";
-     myfile << "}\n";
+    myfile << "}\n";
     myfile << "\n";
-        myfile << "// Room executes all queries on a separate thread.\n";
-        myfile << "// Observed LiveData will notify the observer when the data has changed.\n";
-        myfile << "LiveData<List<" << TableNameStr << ">> getAll" << TableNameStr << "s() {\n";
-            myfile << "return mAll" << TableNameStr << "s;\n";
-        myfile << "}\n";
+    myfile << "// Room executes all queries on a separate thread.\n";
+    myfile << "// Observed LiveData will notify the observer when the data has changed.\n";
+    myfile << "LiveData<List<" << TableNameStr << ">> getAll" << TableNameStr << "s() {\n";
+    myfile << "return mAll" << TableNameStr << "s;\n";
+    myfile << "}\n";
     myfile << "\n";
-        myfile << "// You must call this on a non-UI thread or your app will throw an exception. Room ensures\n";
-        myfile << "// that you're not doing any long running operations on the main thread, blocking the UI.\n";
-        myfile << "void insert(" << TableNameStr << " " << tableNameStr << ") {\n";
-            myfile << "" << DBaseNameStr << "RoomDatabase.databaseWriteExecutor.execute(() -> {\n";
+    myfile << "// You must call this on a non-UI thread or your app will throw an exception. Room ensures\n";
+    myfile << "// that you're not doing any long running operations on the main thread, blocking the UI.\n";
+    myfile << "void insert(" << TableNameStr << " " << tableNameStr << ") {\n";
+    myfile << "" << DBaseNameStr << "RoomDatabase.databaseWriteExecutor.execute(() -> {\n";
     myfile << "\n";
-                myfile << "try{\n";
-                    myfile << "m" << TableNameStr << "Dao.insert(" << tableNameStr << ");\n";
-                myfile << "}\n";
-                myfile << "catch (SQLiteConstraintException ignored){\n";
-                myfile << "}\n";
+    myfile << "try{\n";
+    myfile << "m" << TableNameStr << "Dao.insert(" << tableNameStr << ");\n";
+    myfile << "}\n";
+    myfile << "catch (SQLiteConstraintException ignored){\n";
+    myfile << "}\n";
     myfile << "\n";
-            myfile << "});\n";
-        myfile << "}\n";
+    myfile << "});\n";
+    myfile << "}\n";
     myfile << "\n";
-        myfile << "void update(" << TableNameStr << " " << tableNameStr << ") {\n";
-            myfile << "" << DBaseNameStr << "RoomDatabase.databaseWriteExecutor.execute(() -> m" << TableNameStr << "Dao.update(" << tableNameStr << "));\n";
-        myfile << "}\n";
+    myfile << "void update(" << TableNameStr << " " << tableNameStr << ") {\n";
+    myfile << "" << DBaseNameStr << "RoomDatabase.databaseWriteExecutor.execute(() -> m" << TableNameStr << "Dao.update(" << tableNameStr << "));\n";
+    myfile << "}\n";
     myfile << "\n";
-        myfile << "void delete(" << TableNameStr << " " << tableNameStr << ") {\n";
-            myfile << "" << DBaseNameStr << "RoomDatabase.databaseWriteExecutor.execute(() -> m" << TableNameStr << "Dao.delete(" << tableNameStr << "));\n";
-        myfile << "}\n";
+    myfile << "void delete(" << TableNameStr << " " << tableNameStr << ") {\n";
+    myfile << "" << DBaseNameStr << "RoomDatabase.databaseWriteExecutor.execute(() -> m" << TableNameStr << "Dao.delete(" << tableNameStr << "));\n";
+    myfile << "}\n";
     myfile << "\n";
     myfile << "}\n";
     myfile.close();
@@ -268,38 +283,36 @@ void TableWindow::on_pushButton_clicked()
     myfile << "import androidx.lifecycle.AndroidViewModel;\n";
     myfile << "import androidx.lifecycle.LiveData;\n";
     myfile << "\n";
-    myfile << "import java.time.LocalDate;\n";
-    myfile << "import java.time.format.DateTimeFormatter;\n";
     myfile << "import java.util.List;\n";
     myfile << "\n";
     myfile << "public class " << TableNameStr << "ViewModel extends AndroidViewModel {\n";
     myfile << "\n";
-        myfile << "private final " << TableNameStr << "Repository m" << TableNameStr << "Repository;\n";
+    myfile << "private final " << TableNameStr << "Repository m" << TableNameStr << "Repository;\n";
     myfile << "\n";
-        myfile << "private final LiveData<List<" << TableNameStr << ">> mAll" << TableNameStr << "s;\n";
+    myfile << "private final LiveData<List<" << TableNameStr << ">> mAll" << TableNameStr << "s;\n";
     myfile << "\n";
-        myfile << "public " << TableNameStr << "ViewModel(Application application) {\n";
-            myfile << "super(application);\n";
+    myfile << "public " << TableNameStr << "ViewModel(Application application) {\n";
+    myfile << "super(application);\n";
     myfile << "\n";
-            myfile << "m" << TableNameStr << "Repository = new " << TableNameStr << "Repository(application);\n";
+    myfile << "m" << TableNameStr << "Repository = new " << TableNameStr << "Repository(application);\n";
     myfile << "\n";
-            myfile << "mAll" << TableNameStr << "s = m" << TableNameStr << "Repository.getAll" << TableNameStr << "s();\n";
-        myfile << "}\n";
-        myfile << "LiveData<List<" << TableNameStr << ">> getAll" << TableNameStr << "s() {\n";
-            myfile << "return mAll" << TableNameStr << "s;\n";
-        myfile << "}\n";
+    myfile << "mAll" << TableNameStr << "s = m" << TableNameStr << "Repository.getAll" << TableNameStr << "s();\n";
+    myfile << "}\n";
+    myfile << "LiveData<List<" << TableNameStr << ">> getAll" << TableNameStr << "s() {\n";
+    myfile << "return mAll" << TableNameStr << "s;\n";
+    myfile << "}\n";
     myfile << "\n";
-        myfile << "public void insert(" << TableNameStr << " " << tableNameStr << ") {\n";
-            myfile << "m" << TableNameStr << "Repository.insert(" << tableNameStr << ");\n";
-        myfile << "}\n";
+    myfile << "public void insert(" << TableNameStr << " " << tableNameStr << ") {\n";
+    myfile << "m" << TableNameStr << "Repository.insert(" << tableNameStr << ");\n";
+    myfile << "}\n";
     myfile << "\n";
-        myfile << "public void update(" << TableNameStr << " " << tableNameStr << ") {\n";
-            myfile << "m" << TableNameStr << "Repository.update(" << tableNameStr << ");\n";
-        myfile << "}\n";
+    myfile << "public void update(" << TableNameStr << " " << tableNameStr << ") {\n";
+    myfile << "m" << TableNameStr << "Repository.update(" << tableNameStr << ");\n";
+    myfile << "}\n";
     myfile << "\n";
-        myfile << "public void delete(" << TableNameStr << " " << tableNameStr << ") {\n";
-            myfile << "m" << TableNameStr << "Repository.delete(" << tableNameStr << ");\n";
-        myfile << "}\n";
+    myfile << "public void delete(" << TableNameStr << " " << tableNameStr << ") {\n";
+    myfile << "m" << TableNameStr << "Repository.delete(" << tableNameStr << ");\n";
+    myfile << "}\n";
     myfile << "}\n";
 
     myfile.close();

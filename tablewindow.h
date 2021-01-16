@@ -1,7 +1,6 @@
 #ifndef TABLEWINDOW_H
 #define TABLEWINDOW_H
 
-#include "general.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QVBoxLayout>
@@ -11,6 +10,8 @@
 #include <QSpacerItem>
 #include <iostream>
 #include <fstream>
+
+#include "columnpaket.h"
 
 namespace Ui {
 class TableWindow;
@@ -26,7 +27,7 @@ private:
     QCheckBox *checkBoxDelete;
     QLineEdit *lEColumnName;
     QComboBox *comboBoxType;
-    QCheckBox *checkBoxPrimary;
+    QCheckBox *checkBoxPrimary, *checkBoxAI, *checkBoxIndex;
     QCheckBox *checkBoxUniqe;
     QHBoxLayout *hL;
 
@@ -42,6 +43,8 @@ private:
         QComboBox *type;
         QCheckBox *primary;
         QCheckBox *unique;
+        QCheckBox *AI;
+        QCheckBox *index;
 
     };
     columnStruct column;

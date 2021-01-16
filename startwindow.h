@@ -2,7 +2,6 @@
 #define STARTWINDOW_H
 #include "tablewindow.h"
 #include "ui_tablewindow.h"
-#include "general.h"
 
 #include <QDialog>
 #include <QFileDialog>
@@ -40,8 +39,8 @@ private:
     std::string package_as_path;
     std::string package;
     std::string dataBaseStr, DataBaseStr, tableNameStr, TableNameStr;
-
-    bool path_calculated, ok;
+    std::string TableToViewStr, tableToViewStr;
+    bool path_calculated, ok, showTable;
     QList<ColumnPaket> columnPaketList;
 
     struct TableStruct {
@@ -52,7 +51,7 @@ private:
     QList<TableStruct> tableList;
 
     QList<TableStruct>::iterator it;
-//    QList<QHBoxLayout*> layoutList;
+    //    QList<QHBoxLayout*> layoutList;
 
     bool f1();
     bool f2();
@@ -60,7 +59,8 @@ private:
     bool f5();
     bool f4();
     bool f6();
-
-    void calculate_path();
+    bool f7();
+    bool f8();
+    bool calculate_path();
 };
 #endif // STARTWINDOW_H
